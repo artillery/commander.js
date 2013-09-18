@@ -309,12 +309,12 @@ Command.prototype.option = function(flags, description, fn, defaultValue){
   // default as 3rd arg
   if ('function' != typeof fn) defaultValue = fn, fn = null;
 
-  // preassign default value only for --no-*, [optional], or <required>
-  if (false == option.bool || option.optional || option.required) {
-    // when --no-* we make sure default is true
-    if (false == option.bool) defaultValue = true;
-    // preassign only if we have a default
-    if (undefined !== defaultValue) self[name] = defaultValue;
+  if (undefined !== defaultValue) {
+    // preassign if we specified a default value
+    self[name] = defaultValue;
+  } else if (false == option.bool) {
+    // otherwise when --no-* we make sure default is true
+    self[name] = true;
   }
 
   // register the option
