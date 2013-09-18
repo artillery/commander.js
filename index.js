@@ -766,16 +766,22 @@ Command.prototype.commandHelp = function(){
  */
 
 Command.prototype.helpInformation = function(){
-  return [
-      ''
-    , '  Usage: ' + this._name + ' ' + this.usage()
+  var help = [''];
+
+  if (this._description) {
+    help.push(this._description);
+    help.push('');
+  }
+
+  return help.concat([
+      '  Usage: ' + this._name + ' ' + this.usage()
     , '' + this.commandHelp()
     , '  Options:'
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
     , ''
     , ''
-  ].join('\n');
+  ]).join('\n');
 };
 
 /**
