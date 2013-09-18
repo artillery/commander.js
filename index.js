@@ -37,7 +37,7 @@ exports.Option = Option;
  * @api public
  */
 
-function Option(flags, description) {
+function Option(flags, description, defaultValue) {
   this.flags = flags;
   this.required = ~flags.indexOf('<');
   this.optional = ~flags.indexOf('[');
@@ -46,6 +46,7 @@ function Option(flags, description) {
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
   this.description = description || '';
+  this.defaultValue = defaultValue;
 }
 
 /**
@@ -302,7 +303,7 @@ Command.prototype.action = function(fn){
 
 Command.prototype.option = function(flags, description, fn, defaultValue){
   var self = this
-    , option = new Option(flags, description)
+    , option = new Option(flags, description, defaultValue)
     , oname = option.name()
     , name = camelcase(oname);
 
@@ -721,7 +722,7 @@ Command.prototype.optionHelp = function(){
   return [pad('-h, --help', width) + '  ' + 'output usage information']
     .concat(this.options.map(function(option){
       return pad(option.flags, width)
-        + '  ' + option.description;
+        + '  ' + option.description + (option.defaultValue ? '[' + option.defaultValue + ']' : '');
       }))
     .join('\n');
 };
