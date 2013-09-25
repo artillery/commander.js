@@ -737,25 +737,40 @@ Command.prototype.optionHelp = function(){
 
 Command.prototype.commandHelp = function(){
   if (!this.commands.length) return '';
+
+  cmds = this.commands.map(function(cmd){
+    var args = cmd._args.map(function(arg){
+      return arg.required
+        ? '<' + arg.name + '>'
+        : '[' + arg.name + ']';
+    }).join(' ');
+
+    return cmd._name
+      + (cmd.options.length
+        ? ' [options]'
+        : '') + ' ' + args;
+  });
+
+  var width = cmds.reduce(function(max, cmd){
+    return Math.max(max, cmd.length);
+  }, 0);
+
+  descriptions = this.commands.map(function(cmd){
+    return (cmd.description()
+      ? ' ' + cmd.description()
+      : '');
+  });
+
+  cmds.forEach(function(cmd, i){
+    cmds[i] = pad(cmd, width) + descriptions[i];
+  });
+
+
   return [
       ''
     , '  Commands:'
     , ''
-    , this.commands.map(function(cmd){
-      var args = cmd._args.map(function(arg){
-        return arg.required
-          ? '<' + arg.name + '>'
-          : '[' + arg.name + ']';
-      }).join(' ');
-
-      return pad(cmd._name
-        + (cmd.options.length 
-          ? ' [options]'
-          : '') + ' ' + args, 22)
-        + (cmd.description()
-          ? ' ' + cmd.description()
-          : '');
-    }).join('\n').replace(/^/gm, '    ')
+    , cmds.join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
 };
