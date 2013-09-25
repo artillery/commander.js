@@ -722,7 +722,8 @@ Command.prototype.optionHelp = function(){
   return [pad('-h, --help', width) + '  ' + 'output usage information']
     .concat(this.options.map(function(option){
       return pad(option.flags, width)
-        + '  ' + option.description + (option.defaultValue ? '[' + option.defaultValue + ']' : '');
+        + '  ' + option.description
+        + (option.defaultValue ? (option.description.length > 0 ? ' ' : '') + '[' + option.defaultValue + ']' : '');
       }))
     .join('\n');
 };
